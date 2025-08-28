@@ -1,0 +1,162 @@
+// 全局样式文件
+
+// 重置样式
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+// 滚动条样式
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c0c4cc;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a6a9ad;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 6px;
+}
+
+// 公共样式类
+.clearfix::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.pull-left {
+  float: left;
+}
+
+.pull-right {
+  float: right;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.mb-10 {
+  margin-bottom: 10px;
+}
+
+.mb-20 {
+  margin-bottom: 20px;
+}
+
+.mt-10 {
+  margin-top: 10px;
+}
+
+.mt-20 {
+  margin-top: 20px;
+}
+
+.ml-10 {
+  margin-left: 10px;
+}
+
+.mr-10 {
+  margin-right: 10px;
+}
+
+.p-10 {
+  padding: 10px;
+}
+
+.p-20 {
+  padding: 20px;
+}
+
+// 布局样式
+.full-height {
+  height: 100vh;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+// 表格操作按钮组样式
+.table-operations {
+  margin-bottom: 16px;
+}
+
+.table-operations > .ant-btn {
+  margin-right: 8px;
+}
+
+// 搜索表单样式
+.search-form {
+  .ant-form-item {
+    margin-bottom: 16px;
+  }
+}
+
+// 卡片内容样式
+.card-content {
+  padding: 24px;
+}
+
+// 页面标题样式
+.page-title {
+  font-size: 20px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.85);
+  margin-bottom: 24px;
+}
+
+// 状态标签样式
+.status-tag {
+  &.success {
+    color: #52c41a;
+    background-color: #f6ffed;
+    border-color: #b7eb8f;
+  }
+  
+  &.warning {
+    color: #faad14;
+    background-color: #fffbe6;
+    border-color: #ffe58f;
+  }
+  
+  &.error {
+    color: #f5222d;
+    background-color: #fff2f0;
+    border-color: #ffccc7;
+  }
+}
