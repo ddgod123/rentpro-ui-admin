@@ -125,7 +125,7 @@ npm run build
 
 ### 环境配置
 - 开发环境：`http://localhost:9528`
-- API代理：`http://localhost:8000/api`
+- API代理：`http://localhost:8002/api`
 
 ### 主题配置
 在 `vue.config.js` 中可以配置 Ant Design 主题变量：

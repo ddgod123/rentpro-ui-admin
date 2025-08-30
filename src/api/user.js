@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 用户登录
 export function login(data) {
   return request({
-    url: '/auth/login',
+    url: '/api/auth/login',
     method: 'post',
     data
   })
@@ -12,16 +12,23 @@ export function login(data) {
 // 获取用户信息
 export function getInfo(token) {
   return request({
-    url: '/auth/info',
-    method: 'get',
-    params: { token }
+    url: '/api/auth/user-info',
+    method: 'get'
+  })
+}
+
+// 获取菜单数据
+export function getMenu() {
+  return request({
+    url: '/api/auth/menus',
+    method: 'get'
   })
 }
 
 // 用户登出
 export function logout() {
   return request({
-    url: '/auth/logout',
+    url: '/api/auth/logout',
     method: 'post'
   })
 }

@@ -56,7 +56,7 @@ export const asyncRoutes = [
     name: 'System',
     meta: {
       title: '系统管理',
-      icon: 'system'
+      icon: 'setting'
     },
     children: [
       {
@@ -65,7 +65,8 @@ export const asyncRoutes = [
         component: () => import('@/views/system/user/index'),
         meta: {
           title: '用户管理',
-          icon: 'user'
+          icon: 'user',
+          permission: 'system:user:view'
         }
       },
       {
@@ -74,7 +75,8 @@ export const asyncRoutes = [
         component: () => import('@/views/system/role/index'),
         meta: {
           title: '角色管理',
-          icon: 'role'
+          icon: 'team',
+          permission: 'system:role:view'
         }
       },
       {
@@ -83,7 +85,8 @@ export const asyncRoutes = [
         component: () => import('@/views/system/menu/index'),
         meta: {
           title: '菜单管理',
-          icon: 'menu'
+          icon: 'menu-unfold',
+          permission: 'system:menu:view'
         }
       }
     ]
@@ -95,7 +98,7 @@ export const asyncRoutes = [
     name: 'Rental',
     meta: {
       title: '租赁管理',
-      icon: 'rental'
+      icon: 'apartment'
     },
     children: [
       {
@@ -104,7 +107,8 @@ export const asyncRoutes = [
         component: () => import('@/views/rental/building/index'),
         meta: {
           title: '楼盘管理',
-          icon: 'building'
+          icon: 'bank',
+          permission: 'rental:building:view'
         }
       },
       {
@@ -113,7 +117,8 @@ export const asyncRoutes = [
         component: () => import('@/views/rental/room/index'),
         meta: {
           title: '房源管理',
-          icon: 'room'
+          icon: 'home',
+          permission: 'rental:room:view'
         }
       },
       {
@@ -122,7 +127,8 @@ export const asyncRoutes = [
         component: () => import('@/views/rental/tenant/index'),
         meta: {
           title: '租客管理',
-          icon: 'tenant'
+          icon: 'contacts',
+          permission: 'rental:tenant:view'
         }
       },
       {
@@ -131,7 +137,8 @@ export const asyncRoutes = [
         component: () => import('@/views/rental/contract/index'),
         meta: {
           title: '合同管理',
-          icon: 'contract'
+          icon: 'file-text',
+          permission: 'rental:contract:view'
         }
       }
     ]
@@ -147,6 +154,33 @@ const createRouter = () => new VueRouter({
 })
 
 const router = createRouter()
+
+// 解决Vue Router 3.x中的重定向警告和导航取消问题
+const originalPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push(location, onResolve, onReject) {
+  if (onResolve || onReject) return originalPush.call(this, location, onResolve, onReject)
+  return originalPush.call(this, location).catch(err => {
+    // 忽略导航重复和导航取消错误
+    if (err.name !== 'NavigationDuplicated' && 
+        err.name !== 'NavigationCancelled' && 
+        !err.message.includes('cancelled')) {
+      throw err
+    }
+  })
+}
+
+const originalReplace = VueRouter.prototype.replace
+VueRouter.prototype.replace = function replace(location, onResolve, onReject) {
+  if (onResolve || onReject) return originalReplace.call(this, location, onResolve, onReject)
+  return originalReplace.call(this, location).catch(err => {
+    // 忽略导航重复和导航取消错误
+    if (err.name !== 'NavigationDuplicated' && 
+        err.name !== 'NavigationCancelled' && 
+        !err.message.includes('cancelled')) {
+      throw err
+    }
+  })
+}
 
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
 export function resetRouter() {

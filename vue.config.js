@@ -8,7 +8,7 @@ function resolve(dir) {
 
 const name = 'RentPro Admin' // page title
 
-const port = process.env.port || process.env.npm_config_port || 9528 // dev port
+const port = 9528 // 固定开发端口
 
 module.exports = {
   publicPath: '/',
@@ -28,11 +28,8 @@ module.exports = {
     proxy: {
       // 代理所有 /api 请求到后端服务
       '/api': {
-        target: 'http://localhost:8000', // 后端服务地址
-        changeOrigin: true,
-        pathRewrite: {
-          '^/api': '/api'
-        }
+        target: 'http://localhost:8002', // 后端服务地址，匹配后端配置
+        changeOrigin: true
       }
     }
   },

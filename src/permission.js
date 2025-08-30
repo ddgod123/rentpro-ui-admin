@@ -19,11 +19,18 @@ router.beforeEach(async(to, from, next) => {
 
   // determine whether the user has logged in
   const hasToken = getToken()
+  
+  console.log('权限拦截器检查:', {
+    to: to.path,
+    from: from.path,
+    hasToken: hasToken,
+    tokenValue: getToken()
+  })
 
   if (hasToken) {
     if (to.path === '/login') {
-      // if is logged in, redirect to the home page
-      next({ path: '/' })
+      // 如果已登录，重定向到主页
+      next({ path: '/dashboard', replace: true })
       NProgress.done()
     } else {
       // determine whether the user has obtained his permission roles through getInfo
@@ -33,23 +40,53 @@ router.beforeEach(async(to, from, next) => {
       } else {
         try {
           // get user info
-          // note: roles must be a object array! such as: ['admin'] or ,['developer','editor']
           const { roles } = await store.dispatch('user/getInfo')
 
           // generate accessible routes map based on roles
           const accessRoutes = await store.dispatch('permission/generateRoutes', roles)
 
           // dynamically add accessible routes
-          router.addRoutes(accessRoutes)
+          // Vue Router 3.5+ 使用 addRoute 替代 addRoutes
+          if (router.addRoute) {
+            console.log('开始添加动态路由，数量:', accessRoutes.length)
+            for (const route of accessRoutes) {
+              console.log('添加动态路由:', route.path)
+              router.addRoute(route)
+            }
+            console.log('动态路由添加完成')
+          } else {
+            console.log('使用旧版addRoutes方法')
+            router.addRoutes(accessRoutes)
+          }
 
-          // hack method to ensure that addRoutes is complete
-          // set the replace: true, so the navigation will not leave a history record
-          next({ ...to, replace: true })
+          // 等待路由添加完成
+          await new Promise(resolve => setTimeout(resolve, 200))
+
+          // 修复重定向循环问题
+          // 检查目标路由是否已经被正确添加
+          const toRoute = router.match(to.path)
+          console.log('路由匹配检查:', {
+            path: to.path,
+            matched: toRoute.matched.length,
+            toRoute: toRoute
+          })
+          
+          if (toRoute.matched.length === 0) {
+            // 如果路由未匹配，重定向到dashboard
+            console.log('路由未匹配，重定向到dashboard')
+            next({ path: '/dashboard', replace: true })
+          } else {
+            // 使用replace而不是next()避免循环重定向
+            console.log('路由匹配成功，继续导航')
+            next({ ...to, replace: true })
+          }
         } catch (error) {
           // remove token and go to login page to re-login
+          console.error('获取用户信息失败:', error)
           await store.dispatch('user/resetToken')
-          Message.error(error || 'Has Error')
-          next(`/login?redirect=${to.path}`)
+          const errorMessage = error?.message || error || '获取用户信息失败，请重新登录'
+          Message.error(errorMessage)
+          next(`/login?redirect=${encodeURIComponent(to.path)}`)
           NProgress.done()
         }
       }
@@ -61,7 +98,7 @@ router.beforeEach(async(to, from, next) => {
       next()
     } else {
       // other pages that do not have permission to access are redirected to the login page.
-      next(`/login?redirect=${to.path}`)
+      next(`/login?redirect=${encodeURIComponent(to.path)}`)
       NProgress.done()
     }
   }
